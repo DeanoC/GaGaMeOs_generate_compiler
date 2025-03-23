@@ -10,6 +10,32 @@ GCC_URL="https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.g
 BINUTILS_URL="https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VERSION}.tar.gz"
 NUM_CORES=$(nproc)
 
+# Use the GCC_CONFIGURE_OPTIONS environment variable
+GCC_CONFIGURE_OPTIONS=${GCC_CONFIGURE_OPTIONS:-"\
+    --disable-shared \
+    --disable-threads \
+    --disable-libmudflap \
+    --disable-libssp \
+    --disable-libgomp \
+    --disable-libquadmath \
+    --disable-libatomic \
+    --disable-libitm \
+    --disable-libvtv \
+    --enable-languages=c,c++ \
+    --without-newlib \
+    --disable-nls \
+    --disable-bootstrap \
+    --enable-multilib \
+    --disable-libstdcxx \
+    --with-headers \
+    --disable-libcc1"}
+
+# Use the BINUTILS_CONFIGURE_OPTIONS environment variable
+BINUTILS_CONFIGURE_OPTIONS=${BINUTILS_CONFIGURE_OPTIONS:-"\
+    --disable-nls \
+    --enable-multilib \
+    --disable-werror"}
+
 echo ${TARGET} "toolchain build starting."
 
 # Create necessary directories
@@ -56,14 +82,14 @@ cd ${INSTALL_DIR}/src
 # Build and install binutils
 mkdir -p ${INSTALL_DIR}/build/binutils-build
 cd ${INSTALL_DIR}/build/binutils-build
-${INSTALL_DIR}/src/binutils-${BINUTILS_VERSION}/configure --target=${TARGET} --prefix=${INSTALL_DIR} --disable-nls --disable-werror
+${INSTALL_DIR}/src/binutils-${BINUTILS_VERSION}/configure --target=${TARGET} --prefix=${INSTALL_DIR} ${BINUTILS_CONFIGURE_OPTIONS}
 make -j${NUM_CORES}
 make install
 
 # Configure GCC
 mkdir -p ${INSTALL_DIR}/build/gcc-build
 cd ${INSTALL_DIR}/build/gcc-build
-${INSTALL_DIR}/src/gcc-${GCC_VERSION}/configure --target=${TARGET} --prefix=${INSTALL_DIR} --disable-shared --disable-threads --disable-libmudflap --disable-libssp --disable-libgomp --disable-libquadmath --disable-libatomic --disable-libitm --disable-libvtv --enable-languages=c,c++ --without-newlib --disable-nls --disable-bootstrap --disable-multilib --disable-libstdcxx --with-headers --disable-libcc1
+${INSTALL_DIR}/src/gcc-${GCC_VERSION}/configure --target=${TARGET} --prefix=${INSTALL_DIR} ${GCC_CONFIGURE_OPTIONS}
 
 # Build and install GCC
 make -j${NUM_CORES}

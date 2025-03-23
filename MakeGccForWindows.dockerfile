@@ -20,7 +20,30 @@ RUN apt-get update && apt-get install -y \
 ENV CORES=16
 ENV DISTCLEAN=0
 ENV GCC_VERSION=14.2.0
-ENV BINUTILS_VERSION=2.35
+ENV BINUTILS_VERSION=2.44
+ENV GCC_CONFIGURE_OPTIONS="\
+    --disable-shared \
+    --disable-threads \
+    --disable-libmudflap \
+    --disable-libssp \
+    --disable-libgomp \
+    --disable-libquadmath \
+    --disable-libatomic \
+    --disable-libitm \
+    --disable-libvtv \
+    --enable-languages=c,c++ \
+    --without-newlib \
+    --disable-nls \
+    --disable-bootstrap \
+    --enable-multilib \
+    --disable-libstdcxx \
+    --with-headers \
+    --disable-libcc1"
+ENV BINUTILS_CONFIGURE_OPTIONS="\
+    --disable-nls \
+    --enable-multilib \
+    --disable-werror"
+
 ARG TARGET
 ENV TARGET=${TARGET}
 
