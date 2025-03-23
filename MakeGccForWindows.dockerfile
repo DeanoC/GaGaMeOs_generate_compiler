@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
 # Set environment variables
 ENV CORES=16
 ENV DISTCLEAN=0
-ENV GCC_VERSION=10.2.0
+ENV GCC_VERSION=14.2.0
 ENV BINUTILS_VERSION=2.35
 ARG TARGET
 ENV TARGET=${TARGET}
@@ -34,11 +34,17 @@ VOLUME ["/workspace"]
 COPY create_gcc.sh /create_gcc.sh
 # Copy the Canadian Cross build script into the container
 COPY create_canadian_cross_gcc.sh /create_canadian_cross_gcc.sh
+# Copy the toolchain template into the container
+COPY toolchain_template.cmake /toolchain_template.cmake
+# Copy the create cmake toolchain script into the container
+COPY create_cmake_toolchain.sh /create_cmake_toolchain.sh
 
 # Make the script executable
 RUN chmod +x /create_gcc.sh
 # Make the Canadian Cross build script executable
 RUN chmod +x /create_canadian_cross_gcc.sh
+# Make the create cmake toolchain script executable
+RUN chmod +x /create_cmake_toolchain.sh
 
 # Run the build script
-#ENTRYPOINT ["/bin/bash", "-c", "/create_gcc.sh && /create_canadian_cross_gcc.sh"]
+ENTRYPOINT ["/bin/bash", "-c", "/create_gcc.sh && /create_canadian_cross_gcc.sh"]

@@ -10,7 +10,7 @@ GCC_URL="https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.g
 BINUTILS_URL="https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VERSION}.tar.gz"
 NUM_CORES=$(nproc)
 
-echo ${TARGET} " toolchain build starting."
+echo ${TARGET} "toolchain build starting."
 
 # Create necessary directories
 mkdir -p ${INSTALL_DIR}
@@ -76,4 +76,8 @@ tar -czvf /tmp/linux-${TARGET}-gcc.tar.gz --exclude="build/*" --exclude="src/*" 
 # Move the zip file to the workspace folder
 mv /tmp/linux-${TARGET}-gcc.tar.gz /workspace/
 
-echo ${TARGET} " toolchain installation completed."
+# Run create_cmake_toolchain.sh with the target and version
+/create_cmake_toolchain.sh ${TARGET} ${GCC_VERSION} /workspace/${TARGET}-toolchain.cmake
+
+echo ${TARGET} "toolchain installation completed."
+
